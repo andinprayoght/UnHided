@@ -1,9 +1,9 @@
-FROM python:3.10-slim-buster
+FROM python:3.10-slim
 
 # Set working directory
 WORKDIR /app
 
-# Install dependencies (misalnya git)
+# Install git (jika dibutuhkan)
 RUN apt-get update && apt-get install -y git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
