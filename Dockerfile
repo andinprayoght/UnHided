@@ -3,18 +3,20 @@ FROM python:3.10-slim-buster
 # Set working directory
 WORKDIR /app
 
-# Install git (jika memang dibutuhkan oleh dependensi)
-RUN apt-get update && apt-get install -y git
+# Install dependencies (misalnya git)
+RUN apt-get update && apt-get install -y git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy all files from repo (karena Koyeb sudah clone repo kamu otomatis)
+# Copy all project files
 COPY . .
 
-# Install dependencies
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port (gunakan PORT dari env, fallback ke 8888)
-ENV PORT=8888
-EXPOSE $PORT
+# Railway injects PORT via env
+ENV PORT=8000
+EXPOSE ${PORT}
 
-# Run the app
-CMD ["uvicorn", "run:main_app", "--host", "0.0.0.0", "--port", "8888", "--workers", "4"]
+# Run the app with dynamic PORT from env
+CMD ["sh", "-c", "uvicorn run:main_app --host 0.0.0.0 --port ${PORT} --workers 4"]
